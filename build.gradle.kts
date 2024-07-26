@@ -3,6 +3,7 @@ import java.net.URI
 plugins {
     id("application")
     kotlin("jvm") version "2.0.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "org.forfree.atlassian"
@@ -20,9 +21,10 @@ dependencies {
     implementation("com.atlassian.extras:atlassian-extras-key-manager:3.4.6")
     implementation("com.atlassian.extras:atlassian-extras-decoder-api:3.4.6")
     implementation("com.atlassian.extras:atlassian-extras-decoder-v2:3.4.6")
-    implementation("org.slf4j:slf4j-simple:2.0.13")
+    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1")
     implementation("org.javassist:javassist:3.30.2-GA")
     implementation("com.github.ajalt.clikt:clikt:4.4.0")
+    implementation("commons-codec:commons-codec:1.11")
     testImplementation(kotlin("test"))
 }
 
@@ -38,7 +40,7 @@ tasks.jar {
     manifest {
         attributes(
             mapOf(
-                "Main-Class" to "org.forfree.atlassianv.App",
+                "Main-Class" to application.mainClass,
                 "Premain-Class" to "org.forfree.atlassian.Agent"
             )
         )

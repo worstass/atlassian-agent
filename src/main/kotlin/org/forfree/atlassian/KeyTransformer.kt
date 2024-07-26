@@ -8,7 +8,7 @@ import java.security.ProtectionDomain
 import org.slf4j.LoggerFactory;
 import java.io.IOException
 
-class KeyTransformer(val keyFile: String) : ClassFileTransformer {
+class KeyTransformer(private val keyFile: String) : ClassFileTransformer {
     companion object {
         private var LOG = LoggerFactory.getLogger(KeyTransformer::class.java)
         private val TARGET_CLASS = "com.atlassian.extras.keymanager.KeyManager"
@@ -28,14 +28,14 @@ class KeyTransformer(val keyFile: String) : ClassFileTransformer {
         if (!className.equals(TARGET_CLASS.replace("\\.", "/"))) {
             return byteCode;
         }
-        LOG.info("[Agent] Transforming class ${TARGET_CLASS}")
+        LOG.info("[Agent] Transforming class $TARGET_CLASS")
         try {
             val pubKey = File(keyFile).readText()
-            val cp = ClassPool.getDefault()
-//                cp.importPackage("java.util.Arrays")
-//                cp.importPackage("javax.xml.bind.DatatypeConverter")
+                .replace("-----BEGIN PUBLIC KEY-----", "")
+                .replace(System.lineSeparator(), "")
+                .replace("-----END PUBLIC KEY-----", "");
 
-//            val mod = Modifier.PRIVATE or Modifier.STATIC or Modifier.FINAL
+            val cp = ClassPool.getDefault()
             val cc = cp.get(TARGET_CLASS)
             val m = cc.getDeclaredMethod("reset")
 //                val cb: CtClass = cp.get("byte[]")
@@ -64,7 +64,6 @@ class KeyTransformer(val keyFile: String) : ClassFileTransformer {
                 is NotFoundException,
                 is CannotCompileException,
                 is IOException -> LOG.error(ex.message)
-
                 else -> throw ex
             }
         }

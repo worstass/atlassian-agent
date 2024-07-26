@@ -1,0 +1,15 @@
+Description=JIRA
+CreationDate=2024-1-1
+Evaluation=false
+licenseVersion=2
+MaintenanceExpiryDate=2024-12-31
+Organisation=QuQuan
+ServerID=BFDA-UTGE-VENQ-WTGB
+SEN=SEN-L2107857
+LicenseID=LIDSEN-L2107857
+LicenseExpiryDate=2026-12-31
+PurchaseDate=2023-12-31
+jira.LicenseTypeName=COMMERCIAL
+jira.active=true
+jira.LicenseEdition=ENTERPRISE
+jira.NumberOfUsers=-1
