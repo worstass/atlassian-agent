@@ -1,13 +1,13 @@
 package org.forfree.atlassian
 
-import com.atlassian.extras.common.org.springframework.util.DefaultPropertiesPersister
-import com.atlassian.extras.common.LicensePropertiesConstants
-import  com.atlassian.extras.api.LicenseEdition
+import com.atlassian.extras.api.LicenseEdition
 import com.atlassian.extras.api.LicenseType
-
+import com.atlassian.extras.common.LicensePropertiesConstants
+import com.atlassian.extras.common.org.springframework.util.DefaultPropertiesPersister
 import com.atlassian.extras.decoder.v2.Version2LicenseDecoder
 import com.atlassian.extras.keymanager.Key
 import com.atlassian.extras.keymanager.KeyManager
+import com.atlassian.extras.keymanager.SortedProperties
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.subcommands
@@ -119,17 +119,29 @@ class Generate : CliktCommand() {
 
         val props = Properties()
         props.load(StringReader(File(inPath).readText()))
+        val sorted = SortedProperties()
+        sorted.putAll(props)
+        sorted.remove(LicensePropertiesConstants.LICENSE_HASH)
+
+        val os0 = ByteArrayOutputStream()
+        val dos0 = DeflaterOutputStream(os0, Deflater());
+        val writer0 = OutputStreamWriter(dos0, "UTF-8");
+        DefaultPropertiesPersister().store(sorted, writer0, null);
+        writer0.close()
+        val licHash = manager.sign( String(Base64.encodeBase64(os0.toByteArray()), StandardCharsets.UTF_8), Constants.LICENSE_STRING_KEY_V2)
+        sorted[LicensePropertiesConstants.LICENSE_HASH] = licHash
+
         val os = ByteArrayOutputStream()
         os.write(Version2LicenseDecoder.LICENSE_PREFIX);
         val dos = DeflaterOutputStream(os, Deflater());
         val writer = OutputStreamWriter(dos, "UTF-8");
-        DefaultPropertiesPersister().store(props, writer, null);
-        writer.close();
+        DefaultPropertiesPersister().store(sorted, writer, null);
+        writer.close()
         val licenseData = os.toByteArray()
         val payload = String(Base64.encodeBase64(licenseData), StandardCharsets.UTF_8)
         val hash = manager.sign(payload, Constants.LICENSE_STRING_KEY_V2)
         val licenseContent = Version2LicenseDecoder.packLicense(licenseData, Base64.decodeBase64(hash))
-        echo("$licenseContent")
+        echo(licenseContent)
     }
 }
 
