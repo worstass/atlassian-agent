@@ -21,7 +21,10 @@ dependencies {
     implementation("com.atlassian.extras:atlassian-extras-key-manager:3.4.6")
     implementation("com.atlassian.extras:atlassian-extras-decoder-api:3.4.6")
     implementation("com.atlassian.extras:atlassian-extras-decoder-v2:3.4.6")
-    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1")
+//    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1")
+    implementation("org.slf4j:slf4j-api:2.0.13")
+    implementation("org.slf4j:slf4j-simple:2.0.13")
+
     implementation("org.javassist:javassist:3.30.2-GA")
     implementation("com.github.ajalt.clikt:clikt:4.4.0")
     implementation("commons-codec:commons-codec:1.11")
@@ -41,7 +44,8 @@ tasks.jar {
         attributes(
             mapOf(
                 "Main-Class" to application.mainClass,
-                "Premain-Class" to "org.forfree.atlassian.Agent"
+                "Can-Retransform-Classes" to true,
+               "Premain-Class" to "org.forfree.atlassian.Agent"
             )
         )
     }

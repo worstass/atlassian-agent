@@ -177,8 +177,11 @@ fun readPKCS8PrivateKey(file: File, algo: String): PrivateKey {
     return kf.generatePrivate(PKCS8EncodedKeySpec(encoded))
 }
 
+
 object App {
     @JvmStatic
-    fun main(args: Array<String>) =
+    fun main(args: Array<String>) {
         Atlassian().subcommands(License().subcommands(Generate(), Verify()), Keypair()).main(args)
+    }
+
 }
